@@ -9,7 +9,7 @@ class TypeLayer(models.Model):
         return self.type_layer
 
 
-class BuildingPartition(models.Model):
+class Material(models.Model):
     type_layer = models.ForeignKey(TypeLayer, on_delete=models.CASCADE)
     name_layer = models.CharField(max_length=100)
     thickness = models.FloatField()
