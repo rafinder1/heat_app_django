@@ -19,3 +19,10 @@ def get_routes(request):
 def get_materials(request):
     materials = Material.objects.all()
     return Response({'materials': serializers.serialize('json', materials)})
+
+
+@api_view(['POST'])
+def calculate_param(request):
+    if request.POST:
+        print(request.POST)
+    return Response({'temp': [-20, 0, 10]})
