@@ -18,3 +18,13 @@ class Material(models.Model):
 
     def __str__(self):
         return self.name_layer
+
+
+class Polystyrene(models.Model):
+    name_polystyrene = models.CharField(max_length=100)
+    thickness = models.FloatField()
+    thermal_conductivity = models.FloatField()
+    cost = models.FloatField()
+
+    def __str__(self):
+        return self.name_polystyrene
