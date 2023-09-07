@@ -32,6 +32,15 @@ def get_materials(request):
     return Response({'materials': materials})
 
 
+@api_view(['GET'])
+def get_type_layers(request):
+    type_layers = TypeLayer.objects.all()
+    type_layers = serialize("json", type_layers)
+    type_layers_json = json.loads(type_layers)
+
+    return Response({'type_layers': type_layers_json})
+
+
 @api_view(['POST'])
 def calculate_param(request):
     if request.method == 'POST':
