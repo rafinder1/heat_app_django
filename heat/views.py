@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from heat.models import Material, TypeLayer
+from heat.models import Material, TypeLayer, Polystyrene
 from heat.temp_calculator.temp_calculator import calculate
 import json
 from django.core.serializers import serialize
@@ -39,6 +39,15 @@ def get_type_layers(request):
     type_layers_json = json.loads(type_layers)
 
     return Response({'type_layers': type_layers_json})
+
+
+@api_view(['GET'])
+def get_polystyrene(request):
+    polystyrene = Polystyrene.objects.all()
+    polystyrene = serialize("json", polystyrene)
+    polystyrene_json = json.loads(polystyrene)
+
+    return Response({'polystyrene': polystyrene_json})
 
 
 @api_view(['POST'])
