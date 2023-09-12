@@ -12,7 +12,10 @@ from django.core.serializers import serialize
 def get_routes(request):
     routes = [
         'api/materials',
-        'api/type_layers'
+        'api/materials/filter',
+        'api/type_layers',
+        'api/polystyrene',
+        'api/calculate',
     ]
     return Response(routes)
 
@@ -33,6 +36,21 @@ def get_materials(request):
 
 
 @api_view(['GET'])
+def filter_materials_by_type(request):
+    selected_type = request.query_params.get('selected_type')
+
+    type_layer_pk = TypeLayer.objects.values('pk').get(type_layer=selected_type)['pk']
+
+    # Filter materials by the selected TypeLayer using the retrieved pk
+    materials = Material.objects.filter(type_layer_id=type_layer_pk)
+
+    materials = serialize("json", materials)
+    materials = json.loads(materials)
+
+    return Response({'material': materials})
+
+
+@api_view(['GET'])
 def get_type_layers(request):
     type_layers = TypeLayer.objects.all()
     type_layers = serialize("json", type_layers)
@@ -47,7 +65,7 @@ def get_polystyrene(request):
     polystyrene = serialize("json", polystyrene)
     polystyrene_json = json.loads(polystyrene)
 
-    return Response({'polystyrene': polystyrene_json})
+    return Response({'material': polystyrene_json})
 
 
 @api_view(['POST'])
