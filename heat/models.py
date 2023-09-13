@@ -27,4 +27,4 @@ class Polystyrene(models.Model):
     cost = models.FloatField()
 
     def __str__(self):
-        return self.name_polystyrene
+        return self.name_layer
