@@ -21,7 +21,7 @@ class Material(models.Model):
 
 
 class Polystyrene(models.Model):
-    name_polystyrene = models.CharField(max_length=100)
+    name_layer = models.CharField(max_length=100)
     thickness = models.FloatField()
     thermal_conductivity = models.FloatField()
     cost = models.FloatField()

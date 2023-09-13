@@ -16,6 +16,6 @@ class MaterialAdmin(admin.ModelAdmin):
 
 @admin.register(Polystyrene)
 class PolystyreneAdmin(admin.ModelAdmin):
-    list_display = ('name_polystyrene', 'thickness', 'thermal_conductivity', 'cost')
-    list_filter = ('name_polystyrene',)
-    search_fields = ('name_polystyrene',)
+    list_display = ('name_layer', 'thickness', 'thermal_conductivity', 'cost')
+    list_filter = ('name_layer',)
+    search_fields = ('name_layer',)
