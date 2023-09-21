@@ -94,14 +94,11 @@ def multi_variant_calc(request):
     if request.method == 'POST':
 
         information_about_building = request.data
-
         polystyrene = Polystyrene.objects.all()
         polystyrene = serialize("json", polystyrene)
         polystyrene_json = json.loads(polystyrene)
 
         polystyrene_information = multi_variant_calculate(information_about_building, polystyrene_json)
-        print(polystyrene_information)
-
         return Response(polystyrene_information)
     else:
         return Response({'error': 'Only POST requests are allowed for this endpoint.'}, status=400)
