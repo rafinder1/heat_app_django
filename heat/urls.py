@@ -7,5 +7,6 @@ urlpatterns = [
     path('materials/filter', views.filter_materials_by_type, name='filter_materials_by_type'),
     path('type_layers', views.get_type_layers, name="type_layers"),
     path('polystyrene', views.get_polystyrene, name="polystyrene"),
-    path('calculate', views.calculate_param, name="calculate")
+    path('calculate', views.calculate_param, name="calculate"),
+    path('multi_variant_calc', views.multi_variant_calc, name="multi_variant_calc")
 ]

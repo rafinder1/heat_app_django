@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from heat.models import Material, TypeLayer, Polystyrene
-from heat.temp_calculator.temp_calculator import calculate
+from heat.temp_calculator.temp_calculator import calculate, multi_variant_calculate
 import json
 from django.core.serializers import serialize
 
@@ -47,6 +47,12 @@ def filter_materials_by_type(request):
     materials = serialize("json", materials)
     materials = json.loads(materials)
 
+    type_layers = TypeLayer.objects.all()
+    type_layers_mapping = {layer.pk: layer.type_layer for layer in type_layers}
+
+    for material in materials:
+        material['fields']['type_layer'] = type_layers_mapping.get(material['fields']['type_layer'])
+
     return Response({'material': materials})
 
 
@@ -64,6 +70,8 @@ def get_polystyrene(request):
     polystyrene = Polystyrene.objects.all()
     polystyrene = serialize("json", polystyrene)
     polystyrene_json = json.loads(polystyrene)
+    for item in polystyrene_json:
+        item['fields']['type_layer'] = 'ocieplenie'
 
     return Response({'material': polystyrene_json})
 
@@ -77,5 +85,23 @@ def calculate_param(request):
         temperatures_and_thickness = calculate(information_about_building)
 
         return Response(temperatures_and_thickness)
+    else:
+        return Response({'error': 'Only POST requests are allowed for this endpoint.'}, status=400)
+
+
+@api_view(['POST'])
+def multi_variant_calc(request):
+    if request.method == 'POST':
+
+        information_about_building = request.data
+
+        polystyrene = Polystyrene.objects.all()
+        polystyrene = serialize("json", polystyrene)
+        polystyrene_json = json.loads(polystyrene)
+
+        polystyrene_information = multi_variant_calculate(information_about_building, polystyrene_json)
+        print(polystyrene_information)
+
+        return Response(polystyrene_information)
     else:
         return Response({'error': 'Only POST requests are allowed for this endpoint.'}, status=400)
