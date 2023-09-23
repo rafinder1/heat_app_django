@@ -14,8 +14,7 @@ def get_routes(request):
         'api/materials',
         'api/materials/filter',
         'api/type_layers',
-        'api/polystyrene',
-        'api/calculate',
+        'api/thermal_isolation',
     ]
     return Response(routes)
 
@@ -66,14 +65,14 @@ def get_type_layers(request):
 
 
 @api_view(['GET'])
-def get_polystyrene(request):
-    polystyrene = ThermalIsolation.objects.all()
-    polystyrene = serialize("json", polystyrene)
-    polystyrene_json = json.loads(polystyrene)
-    for item in polystyrene_json:
+def get_thermal_isolation(request):
+    thermal_isolation = ThermalIsolation.objects.all()
+    thermal_isolation = serialize("json", thermal_isolation)
+    thermal_isolation_json = json.loads(thermal_isolation)
+    for item in thermal_isolation_json:
         item['fields']['type_layer'] = 'ocieplenie'
 
-    return Response({'material': polystyrene_json})
+    return Response({'material': thermal_isolation_json})
 
 
 @api_view(['POST'])
@@ -94,11 +93,11 @@ def multi_variant_calc(request):
     if request.method == 'POST':
 
         information_about_building = request.data
-        polystyrene = ThermalIsolation.objects.all()
-        polystyrene = serialize("json", polystyrene)
-        polystyrene_json = json.loads(polystyrene)
+        thermal_isolation = ThermalIsolation.objects.all()
+        thermal_isolation = serialize("json", thermal_isolation)
+        thermal_isolation_json = json.loads(thermal_isolation)
 
-        polystyrene_information = multi_variant_calculate(information_about_building, polystyrene_json)
-        return Response(polystyrene_information)
+        thermal_isolation_information = multi_variant_calculate(information_about_building, thermal_isolation_json)
+        return Response(thermal_isolation_information)
     else:
         return Response({'error': 'Only POST requests are allowed for this endpoint.'}, status=400)

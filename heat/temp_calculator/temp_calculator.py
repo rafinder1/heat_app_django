@@ -32,7 +32,7 @@ def calculate(data):
     return {'temp': temperatures_list, 'thickness': cumulative_thickness_list}
 
 
-def multi_variant_calculate(data, polystyrene_json):
+def multi_variant_calculate(data, thermal_isolation_json):
     data_building_partition = data['data_building_partition']
     data_building_partition_df = pd.DataFrame(data_building_partition)
 
@@ -41,21 +41,24 @@ def multi_variant_calculate(data, polystyrene_json):
 
     method = MethodName.finite_element_method
 
-    polystyrene_df = pd.DataFrame(polystyrene_json)
-    polystyrene_data = pd.concat(objs=[polystyrene_df.drop(['fields'], axis=1),
-                                       polystyrene_df['fields'].apply(pd.Series)], axis=1)
+    thermal_isolation_df = pd.DataFrame(thermal_isolation_json)
+    thermal_isolation_data = pd.concat(objs=[thermal_isolation_df.drop(['fields'], axis=1),
+                                             thermal_isolation_df['fields'].apply(pd.Series)], axis=1)
 
-    all_polystyrene_with_temp = MultiVariantsCalculator.change_polystyrene(
+    all_thermal_isolation_with_temp = MultiVariantsCalculator.change_polystyrene(
         data_building_partition=data_building_partition_df,
         heat_information=heat_information,
-        polystyrene_data=polystyrene_data, method=method)
-    all_polystyrene_with_temp['temp_diff'] = all_polystyrene_with_temp['temperatures'] - expected_temperature
-    positive_diff = all_polystyrene_with_temp[all_polystyrene_with_temp['temp_diff'] >= 0]
+        polystyrene_data=thermal_isolation_data, method=method)
+    all_thermal_isolation_with_temp['temp_diff'] = all_thermal_isolation_with_temp[
+                                                       'temperatures'] - expected_temperature
+    positive_diff = all_thermal_isolation_with_temp[all_thermal_isolation_with_temp['temp_diff'] >= 0]
     sorted_data_by_name_layer_temp_diff = positive_diff.sort_values(by=['name_layer', 'temp_diff'])
 
     sorted_data_by_name_layer_temp_diff.fillna('', inplace=True)
 
     result = sorted_data_by_name_layer_temp_diff.groupby('name_layer').first().reset_index()
+
+    result.sort_values(by=['cost'], inplace=True)
 
     return {"name_layer": result.name_layer.to_list(),
             "thickness": result.thickness.to_list(),
