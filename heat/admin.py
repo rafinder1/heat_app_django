@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TypeLayer, Material, Polystyrene
+from .models import TypeLayer, Material, ThermalIsolation
 
 
 @admin.register(TypeLayer)
@@ -14,8 +14,8 @@ class MaterialAdmin(admin.ModelAdmin):
     search_fields = ('name_layer',)
 
 
-@admin.register(Polystyrene)
-class PolystyreneAdmin(admin.ModelAdmin):
-    list_display = ('name_layer', 'thickness', 'thermal_conductivity', 'cost')
+@admin.register(ThermalIsolation)
+class ThermalIsolationAdmin(admin.ModelAdmin):
+    list_display = ('name_layer', 'thickness', 'thermal_conductivity', 'cost', 'package_square_meters')
     list_filter = ('name_layer',)
     search_fields = ('name_layer',)

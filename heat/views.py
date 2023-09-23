@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from heat.models import Material, TypeLayer, Polystyrene
+from heat.models import Material, TypeLayer, ThermalIsolation
 from heat.temp_calculator.temp_calculator import calculate, multi_variant_calculate
 import json
 from django.core.serializers import serialize
@@ -67,7 +67,7 @@ def get_type_layers(request):
 
 @api_view(['GET'])
 def get_polystyrene(request):
-    polystyrene = Polystyrene.objects.all()
+    polystyrene = ThermalIsolation.objects.all()
     polystyrene = serialize("json", polystyrene)
     polystyrene_json = json.loads(polystyrene)
     for item in polystyrene_json:
@@ -94,7 +94,7 @@ def multi_variant_calc(request):
     if request.method == 'POST':
 
         information_about_building = request.data
-        polystyrene = Polystyrene.objects.all()
+        polystyrene = ThermalIsolation.objects.all()
         polystyrene = serialize("json", polystyrene)
         polystyrene_json = json.loads(polystyrene)
 
