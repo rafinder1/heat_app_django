@@ -2,7 +2,9 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from heat.models import Material, TypeLayer, ThermalIsolation
-from heat.temp_calculator.temp_calculator import calculate, multi_variant_calculate
+from heat.calculator.temp_calculator import calculate, multi_variant_calculate
+from heat.calculator.APAP_data import AmountPolystyreneData
+from heat.calculator.amount_polystyrene_and_price import AmountPolystyreneAndPriceCalculator
 import json
 from django.core.serializers import serialize
 
@@ -101,3 +103,16 @@ def multi_variant_calc(request):
         return Response(thermal_isolation_information)
     else:
         return Response({'error': 'Only POST requests are allowed for this endpoint.'}, status=400)
+
+
+@api_view(['GET'])
+def calculate_amount_polystyrene_and_price(request):
+    wall_surface = float(request.GET.get('wall_surface', 0))
+    price_square_meter = float(request.GET.get('price_square_meter', 0))
+    amount_package = float(request.GET.get('amount_package', 0))
+
+    amount_polystyrene_data = AmountPolystyreneData(wall_surface=wall_surface, price_square_meter=price_square_meter,
+                                                    amount_package=amount_package)
+    data = AmountPolystyreneAndPriceCalculator.calculate(amount_polystyrene_data=amount_polystyrene_data)
+
+    return Response(data)

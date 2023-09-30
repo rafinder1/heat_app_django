@@ -8,5 +8,7 @@ urlpatterns = [
     path('type_layers', views.get_type_layers, name="type_layers"),
     path('thermal_isolation', views.get_thermal_isolation, name="thermal_isolation"),
     path('calculate', views.calculate_param, name="calculate"),
-    path('multi_variant_calc', views.multi_variant_calc, name="multi_variant_calc")
+    path('multi_variant_calc', views.multi_variant_calc, name="multi_variant_calc"),
+    path('calculate_amount_polys_price/', views.calculate_amount_polystyrene_and_price,
+         name="calculate_amount_polystyrene_and_price")
 ]

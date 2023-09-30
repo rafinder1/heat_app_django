@@ -5,6 +5,7 @@ from calculator.basic.calculator import TempCalculator
 from calculator.multivariants.multivariants import MultiVariantsCalculator
 
 
+
 class MethodName(Enum):
     finite_element_method = "finite_element_method"
 
@@ -66,3 +67,4 @@ def multi_variant_calculate(data, thermal_isolation_json):
             "cost": result.cost.to_list(),
             "temperatures": result.temperatures.to_list(),
             "comments": result.comments.to_list()}
+
