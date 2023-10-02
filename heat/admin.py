@@ -17,26 +17,17 @@ class MaterialAdmin(admin.ModelAdmin):
 @admin.register(ThermalIsolation)
 class ThermalIsolationAdmin(admin.ModelAdmin):
     list_display = ('thickness', 'thermal_conductivity', 'cost', 'package_square_meters')
-    list_filter = ('thickness', 'cost',)
-    search_fields = ('thermal_conductivity',)
 
 
 @admin.register(Wall)
 class WallAdmin(admin.ModelAdmin):
     list_display = ('thickness', 'thermal_conductivity', 'cost')
-    list_filter = ('thickness', 'cost',)
-    search_fields = ('thermal_conductivity',)
-
 
 @admin.register(Plaster)
 class PlasterAdmin(admin.ModelAdmin):
     list_display = ('thickness', 'thermal_conductivity', 'cost')
-    list_filter = ('thickness', 'cost',)
-    search_fields = ('thermal_conductivity',)
 
 
 @admin.register(Isolation)
 class IsolationAdmin(admin.ModelAdmin):
     list_display = ('thickness', 'thermal_conductivity', 'cost')
-    list_filter = ('thickness', 'cost',)
-    search_fields = ('thermal_conductivity',)
