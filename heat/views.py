@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from heat.models import Material, TypeLayer, ThermalIsolation
+# from heat.models import TypeLayer # Material,   # , ThermalIsolation
 from heat.calculator.temp_calculator import calculate, multi_variant_calculate
 from heat.calculator.APAP_data import AmountPolystyreneData
 from heat.calculator.amount_polystyrene_and_price import AmountPolystyreneAndPriceCalculator
@@ -108,6 +108,9 @@ def multi_variant_calc(request):
 @api_view(['GET'])
 def calculate_amount_polystyrene_and_price(request):
     wall_surface = float(request.GET.get('wall_surface', 0))
+    name_layer = request.GET.get('name_layer', 0)
+    thickness = float(request.GET.get('thickness', 0))
+    print(name_layer, thickness)
     price_square_meter = float(request.GET.get('price_square_meter', 0))
     amount_package = float(request.GET.get('amount_package', 0))
 

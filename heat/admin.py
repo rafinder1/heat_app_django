@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TypeLayer, Material, ThermalIsolation
+from .models import TypeLayer, Material, ThermalIsolation, Wall, Plaster, Isolation
 
 
 @admin.register(TypeLayer)
@@ -9,13 +9,34 @@ class TypeLayerAdmin(admin.ModelAdmin):
 
 @admin.register(Material)
 class MaterialAdmin(admin.ModelAdmin):
-    list_display = ('name_layer', 'type_layer', 'thickness', 'thermal_conductivity', 'cost')
+    list_display = ('name_layer', 'type_layer')
     list_filter = ('type_layer',)
     search_fields = ('name_layer',)
 
 
 @admin.register(ThermalIsolation)
 class ThermalIsolationAdmin(admin.ModelAdmin):
-    list_display = ('name_layer', 'thickness', 'thermal_conductivity', 'cost', 'package_square_meters')
-    list_filter = ('name_layer',)
-    search_fields = ('name_layer',)
+    list_display = ('thickness', 'thermal_conductivity', 'cost', 'package_square_meters')
+    list_filter = ('thickness', 'cost',)
+    search_fields = ('thermal_conductivity',)
+
+
+@admin.register(Wall)
+class WallAdmin(admin.ModelAdmin):
+    list_display = ('thickness', 'thermal_conductivity', 'cost')
+    list_filter = ('thickness', 'cost',)
+    search_fields = ('thermal_conductivity',)
+
+
+@admin.register(Plaster)
+class PlasterAdmin(admin.ModelAdmin):
+    list_display = ('thickness', 'thermal_conductivity', 'cost')
+    list_filter = ('thickness', 'cost',)
+    search_fields = ('thermal_conductivity',)
+
+
+@admin.register(Isolation)
+class IsolationAdmin(admin.ModelAdmin):
+    list_display = ('thickness', 'thermal_conductivity', 'cost')
+    list_filter = ('thickness', 'cost',)
+    search_fields = ('thermal_conductivity',)
