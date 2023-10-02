@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-# from heat.models import TypeLayer # Material,   # , ThermalIsolation
+from heat.models import TypeLayer, Material, ThermalIsolation, Isolation, Wall, Plaster
 from heat.calculator.temp_calculator import calculate, multi_variant_calculate
 from heat.calculator.APAP_data import AmountPolystyreneData
 from heat.calculator.amount_polystyrene_and_price import AmountPolystyreneAndPriceCalculator
@@ -14,26 +14,32 @@ from django.core.serializers import serialize
 def get_routes(request):
     routes = [
         'api/materials',
-        'api/materials/filter',
         'api/type_layers',
         'api/thermal_isolation',
+        'api/isolation',
+        'api/wall',
+        'api/plaster',
+
+        # 'api/materials/filter',
+
     ]
     return Response(routes)
 
 
 @api_view(['GET'])
-def get_materials(request):
+def get_materials(*args, **kwargs):
     materials = Material.objects.all()
-    materials = serialize("json", materials)
-    materials = json.loads(materials)
-
-    type_layers = TypeLayer.objects.all()
-    type_layers_mapping = {layer.pk: layer.type_layer for layer in type_layers}
+    materials_data = []
 
     for material in materials:
-        material['fields']['type_layer'] = type_layers_mapping.get(material['fields']['type_layer'])
+        material_data = {
+            'id': material.id,
+            'name_layer': material.name_layer,
+            'type_layer': material.type_layer.type_layer
+        }
+        materials_data.append(material_data)
 
-    return Response({'materials': materials})
+    return Response(materials_data)
 
 
 @api_view(['GET'])
@@ -58,23 +64,91 @@ def filter_materials_by_type(request):
 
 
 @api_view(['GET'])
-def get_type_layers(request):
+def get_type_layers(*args, **kwargs):
     type_layers = TypeLayer.objects.all()
-    type_layers = serialize("json", type_layers)
-    type_layers_json = json.loads(type_layers)
+    type_layers_data = []
 
-    return Response({'type_layers': type_layers_json})
+    for type_layer in type_layers:
+        type_layer_data = {
+            'id': type_layer.id,
+            'type_layer': type_layer.type_layer
+        }
+        type_layers_data.append(type_layer_data)
+
+    return Response(type_layers_data)
 
 
 @api_view(['GET'])
-def get_thermal_isolation(request):
-    thermal_isolation = ThermalIsolation.objects.all()
-    thermal_isolation = serialize("json", thermal_isolation)
-    thermal_isolation_json = json.loads(thermal_isolation)
-    for item in thermal_isolation_json:
-        item['fields']['type_layer'] = 'ocieplenie'
+def get_thermal_isolation(*args, **kwargs):
+    thermal_isolations = ThermalIsolation.objects.all()
+    thermal_isolations_data = []
 
-    return Response({'material': thermal_isolation_json})
+    for ti in thermal_isolations:
+        ti_data = {
+            'id': ti.id,
+            'name_layer': ti.name_layer.name_layer,
+            'thickness': ti.thickness,
+            'thermal_conductivity': ti.thermal_conductivity,
+            'cost': ti.cost,
+            'package_square_meters': ti.package_square_meters,
+        }
+        thermal_isolations_data.append(ti_data)
+
+    return Response(thermal_isolations_data)
+
+
+@api_view(['GET'])
+def get_isolation(*args, **kwargs):
+    isolations = Isolation.objects.all()
+    isolations_data = []
+
+    for isolation in isolations:
+        i_data = {
+            'id': isolation.id,
+            'name_layer': isolation.name_layer.name_layer,
+            'thickness': isolation.thickness,
+            'thermal_conductivity': isolation.thermal_conductivity,
+            'cost': isolation.cost,
+        }
+        isolations_data.append(i_data)
+
+    return Response(isolations_data)
+
+
+@api_view(['GET'])
+def get_wall(*args, **kwargs):
+    walls = Wall.objects.all()
+    walls_data = []
+
+    for wall in walls:
+        w_data = {
+            'id': wall.id,
+            'name_layer': wall.name_layer.name_layer,
+            'thickness': wall.thickness,
+            'thermal_conductivity': wall.thermal_conductivity,
+            'cost': wall.cost,
+        }
+        walls_data.append(w_data)
+
+    return Response(walls_data)
+
+
+@api_view(['GET'])
+def get_plaster(*args, **kwargs):
+    plasters = Plaster.objects.all()
+    plasters_data = []
+
+    for plaster in plasters:
+        p_data = {
+            'id': plaster.id,
+            'name_layer': plaster.name_layer.name_layer,
+            'thickness': plaster.thickness,
+            'thermal_conductivity': plaster.thermal_conductivity,
+            'cost': plaster.cost,
+        }
+        plasters_data.append(p_data)
+
+    return Response(plasters_data)
 
 
 @api_view(['POST'])
