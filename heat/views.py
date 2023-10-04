@@ -51,16 +51,49 @@ def filter_materials_by_type(request):
     # Filter materials by the selected TypeLayer using the retrieved pk
     materials = Material.objects.filter(type_layer_id=type_layer_pk)
 
-    materials = serialize("json", materials)
-    materials = json.loads(materials)
-
-    type_layers = TypeLayer.objects.all()
-    type_layers_mapping = {layer.pk: layer.type_layer for layer in type_layers}
-
+    materials_data = []
     for material in materials:
-        material['fields']['type_layer'] = type_layers_mapping.get(material['fields']['type_layer'])
+        material_data = {
+            'id': material.id,
+            'name_layer': material.name_layer,
+            'type_layer': material.type_layer.type_layer
+        }
+        materials_data.append(material_data)
 
-    return Response({'material': materials})
+    return Response(materials_data)
+
+
+@api_view(['GET'])
+def filter_thickness_by_material(request):
+    selected_material = request.query_params.get('selected_material')
+    print(selected_material)
+    filtered_materials = Material.objects.filter(name_layer=selected_material)
+    material_layer_pk = filtered_materials.values('id').first()['id']
+    type_layer_pk = filtered_materials.values('type_layer_id').first()['type_layer_id']
+
+    type_layer = TypeLayer.objects.filter(pk=type_layer_pk).first()
+    if str(type_layer) == 'tynk':
+        many_materials = Plaster.objects.filter(id=material_layer_pk)
+    elif str(type_layer) == 'mur':
+        many_materials = Wall.objects.filter(id=material_layer_pk)
+    elif str(type_layer) == 'ocieplenie':
+        selected_material = Material.objects.get(
+            pk=material_layer_pk)
+        related_thermal_isolations = selected_material.thermalisolation_set.all()
+    elif str(type_layer) == 'izolacja':
+        many_materials = Isolation.objects.filter(id=material_layer_pk)
+
+    materials_data = []
+    for material in related_thermal_isolations:
+        material_data = {
+            'name_layer': material.name_layer.name_layer,
+            'thickness': material.thickness,
+            'thermal_conductivity': material.thermal_conductivity
+        }
+        materials_data.append(material_data)
+    print()
+
+    return Response(materials_data)
 
 
 @api_view(['GET'])
@@ -84,6 +117,7 @@ def get_thermal_isolation(*args, **kwargs):
     thermal_isolations_data = []
 
     for ti in thermal_isolations:
+        print(ti.id)
         ti_data = {
             'id': ti.id,
             'name_layer': ti.name_layer.name_layer,

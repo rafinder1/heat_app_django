@@ -11,10 +11,7 @@ class TypeLayer(models.Model):
 
 class Material(models.Model):
     type_layer = models.ForeignKey(TypeLayer, on_delete=models.CASCADE)
-    name_layer = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name_layer
+    name_layer = models.CharField(max_length=100, unique=True)
 
 
 class ThermalIsolation(models.Model):
@@ -24,18 +21,12 @@ class ThermalIsolation(models.Model):
     cost = models.FloatField()
     package_square_meters = models.FloatField()
 
-    def __str__(self):
-        return self.name_layer
-
 
 class Wall(models.Model):
     name_layer = models.ForeignKey(Material, on_delete=models.CASCADE, null=True, blank=True)
     thickness = models.FloatField()
     thermal_conductivity = models.FloatField()
     cost = models.FloatField()
-
-    def __str__(self):
-        return self.name_layer
 
 
 class Plaster(models.Model):
@@ -44,15 +35,9 @@ class Plaster(models.Model):
     thermal_conductivity = models.FloatField()
     cost = models.FloatField()
 
-    def __str__(self):
-        return self.name_layer
-
 
 class Isolation(models.Model):
     name_layer = models.ForeignKey(Material, on_delete=models.CASCADE, null=True, blank=True)
     thickness = models.FloatField()
     thermal_conductivity = models.FloatField()
     cost = models.FloatField()
-
-    def __str__(self):
-        return self.name_layer
