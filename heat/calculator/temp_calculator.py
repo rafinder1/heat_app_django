@@ -42,9 +42,7 @@ def multi_variant_calculate(data, thermal_isolation_json):
 
     method = MethodName.finite_element_method
 
-    thermal_isolation_df = pd.DataFrame(thermal_isolation_json)
-    thermal_isolation_data = pd.concat(objs=[thermal_isolation_df.drop(['fields'], axis=1),
-                                             thermal_isolation_df['fields'].apply(pd.Series)], axis=1)
+    thermal_isolation_data = pd.DataFrame(thermal_isolation_json)
 
     all_thermal_isolation_with_temp = MultiVariantsCalculator.change_polystyrene(
         data_building_partition=data_building_partition_df,

@@ -66,32 +66,26 @@ def filter_materials_by_type(request):
 @api_view(['GET'])
 def filter_thickness_by_material(request):
     selected_material = request.query_params.get('selected_material')
-    print(selected_material)
-    filtered_materials = Material.objects.filter(name_layer=selected_material)
-    material_layer_pk = filtered_materials.values('id').first()['id']
-    type_layer_pk = filtered_materials.values('type_layer_id').first()['type_layer_id']
+    filtered_materials = Material.objects.get(name_layer=selected_material)
 
-    type_layer = TypeLayer.objects.filter(pk=type_layer_pk).first()
+    type_layer = filtered_materials.type_layer
     if str(type_layer) == 'tynk':
-        many_materials = Plaster.objects.filter(id=material_layer_pk)
+        many_materials = filtered_materials.plaster_set.all()
     elif str(type_layer) == 'mur':
-        many_materials = Wall.objects.filter(id=material_layer_pk)
+        many_materials = filtered_materials.wall_set.all()
     elif str(type_layer) == 'ocieplenie':
-        selected_material = Material.objects.get(
-            pk=material_layer_pk)
-        related_thermal_isolations = selected_material.thermalisolation_set.all()
+        many_materials = filtered_materials.thermalisolation_set.all()
     elif str(type_layer) == 'izolacja':
-        many_materials = Isolation.objects.filter(id=material_layer_pk)
+        many_materials = filtered_materials.isolation_set.all()
 
     materials_data = []
-    for material in related_thermal_isolations:
+    for material in many_materials:
         material_data = {
-            'name_layer': material.name_layer.name_layer,
             'thickness': material.thickness,
-            'thermal_conductivity': material.thermal_conductivity
+            'thermal_conductivity': material.thermal_conductivity,
+            'cost': material.cost
         }
         materials_data.append(material_data)
-    print()
 
     return Response(materials_data)
 
@@ -117,7 +111,6 @@ def get_thermal_isolation(*args, **kwargs):
     thermal_isolations_data = []
 
     for ti in thermal_isolations:
-        print(ti.id)
         ti_data = {
             'id': ti.id,
             'name_layer': ti.name_layer.name_layer,
@@ -204,10 +197,21 @@ def multi_variant_calc(request):
 
         information_about_building = request.data
         thermal_isolation = ThermalIsolation.objects.all()
-        thermal_isolation = serialize("json", thermal_isolation)
-        thermal_isolation_json = json.loads(thermal_isolation)
 
-        thermal_isolation_information = multi_variant_calculate(information_about_building, thermal_isolation_json)
+        thermal_isolations_data = []
+
+        for ti in thermal_isolation:
+            ti_data = {
+                'id': ti.id,
+                'name_layer': ti.name_layer.name_layer,
+                'thickness': ti.thickness,
+                'thermal_conductivity': ti.thermal_conductivity,
+                'cost': ti.cost,
+                'package_square_meters': ti.package_square_meters,
+            }
+            thermal_isolations_data.append(ti_data)
+
+        thermal_isolation_information = multi_variant_calculate(information_about_building, thermal_isolations_data)
         return Response(thermal_isolation_information)
     else:
         return Response({'error': 'Only POST requests are allowed for this endpoint.'}, status=400)
