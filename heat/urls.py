@@ -14,6 +14,6 @@ urlpatterns = [
     path('thickness_material/filter', views.filter_thickness_by_material, name='filter_thickness_by_material'),
     # path('calculate', views.calculate_param, name="calculate"),
     path('multi_variant_calc', views.multi_variant_calc, name="multi_variant_calc"),
-    # path('calculate_amount_polys_price/', views.calculate_amount_polystyrene_and_price,
-    #      name="calculate_amount_polystyrene_and_price")
+    path('calculate_amount_polys_price', views.calculate_amount_polystyrene_and_price,
+         name="calculate_amount_polystyrene_and_price")
 ]

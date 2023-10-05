@@ -63,6 +63,7 @@ def multi_variant_calculate(data, thermal_isolation_json):
             "thickness": result.thickness.to_list(),
             "thermal_conductivity": result.thermal_conductivity.to_list(),
             "cost": result.cost.to_list(),
+            "package_square_meters": result.package_square_meters.to_list(),
             "temperatures": result.temperatures.to_list(),
             "comments": result.comments.to_list()}
 

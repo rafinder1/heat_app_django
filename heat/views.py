@@ -212,22 +212,29 @@ def multi_variant_calc(request):
             thermal_isolations_data.append(ti_data)
 
         thermal_isolation_information = multi_variant_calculate(information_about_building, thermal_isolations_data)
+        print(thermal_isolation_information)
         return Response(thermal_isolation_information)
     else:
         return Response({'error': 'Only POST requests are allowed for this endpoint.'}, status=400)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def calculate_amount_polystyrene_and_price(request):
-    wall_surface = float(request.GET.get('wall_surface', 0))
-    name_layer = request.GET.get('name_layer', 0)
-    thickness = float(request.GET.get('thickness', 0))
-    print(name_layer, thickness)
-    price_square_meter = float(request.GET.get('price_square_meter', 0))
-    amount_package = float(request.GET.get('amount_package', 0))
+    information_about_polystyrene = request.data
+    wall_surface = information_about_polystyrene['inputWallSurface']
 
-    amount_polystyrene_data = AmountPolystyreneData(wall_surface=wall_surface, price_square_meter=price_square_meter,
-                                                    amount_package=amount_package)
-    data = AmountPolystyreneAndPriceCalculator.calculate(amount_polystyrene_data=amount_polystyrene_data)
+    best_thermal_isolations = information_about_polystyrene['mvc']
 
-    return Response(data)
+    amount_and_price_thermal_isolations = []
+    for ti in best_thermal_isolations:
+        amount_polystyrene_data = AmountPolystyreneData(wall_surface=wall_surface,
+                                                        price_square_meter=ti['cost'],
+                                                        amount_package=ti['package_square_meters'])
+
+        data = AmountPolystyreneAndPriceCalculator.calculate(amount_polystyrene_data=amount_polystyrene_data)
+        data['name_layer'] = ti['name_layer']
+        data['thickness'] = ti['thickness']
+
+        amount_and_price_thermal_isolations.append(data)
+
+    return Response(amount_and_price_thermal_isolations)
