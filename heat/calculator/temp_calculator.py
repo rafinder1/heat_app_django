@@ -1,9 +1,12 @@
+import logging
 from enum import Enum
+import sys
 import pandas as pd
-
 from calculator.basic.calculator import TempCalculator
 from calculator.multivariants.multivariants import MultiVariantsCalculator
 
+GLOBAL_LOGGING_LEVEL = logging.INFO
+logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOGGING_LEVEL)
 
 
 class MethodName(Enum):
@@ -39,11 +42,14 @@ def multi_variant_calculate(data, thermal_isolation_json):
 
     heat_information = data['heat_information']
     expected_temperature = data['expected_temperature']
+    if expected_temperature is None or expected_temperature == '':
+        expected_temperature = 20
+        logging.warning(
+            f'Expected Temperature is not defined. Take the default value equal {expected_temperature}°C')
 
     method = MethodName.finite_element_method
 
     thermal_isolation_data = pd.DataFrame(thermal_isolation_json)
-
     all_thermal_isolation_with_temp = MultiVariantsCalculator.change_polystyrene(
         data_building_partition=data_building_partition_df,
         heat_information=heat_information,
@@ -66,4 +72,3 @@ def multi_variant_calculate(data, thermal_isolation_json):
             "package_square_meters": result.package_square_meters.to_list(),
             "temperatures": result.temperatures.to_list(),
             "comments": result.comments.to_list()}
-
