@@ -40,6 +40,18 @@ def multi_variant_calculate(data, thermal_isolation_json):
     data_building_partition = data['data_building_partition']
     data_building_partition_df = pd.DataFrame(data_building_partition)
 
+    if len(data_building_partition_df) == 1:
+        if 'ocieplenie' in data_building_partition_df['type_layer'].values:
+            logging.warning(
+                "Only Styrofoam was selected, multi-variant analysis is not possible. Empty data was passed")
+            return {"name_layer": [],
+                    "thickness": [],
+                    "thermal_conductivity": [],
+                    "cost": [],
+                    "package_square_meters": [],
+                    "temperatures": [],
+                    "comments": []}
+
     heat_information = data['heat_information']
     expected_temperature = data['expected_temperature']
     if expected_temperature is None or expected_temperature == '':
