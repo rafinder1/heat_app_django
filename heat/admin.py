@@ -21,7 +21,7 @@ class ThermalIsolationAdmin(admin.ModelAdmin):
 
 @admin.register(Wall)
 class WallAdmin(admin.ModelAdmin):
-    list_display = ('thickness', 'thermal_conductivity', 'cost')
+    list_display = ('name_layer', 'thickness', 'thermal_conductivity', 'cost')
 
 
 @admin.register(Plaster)
