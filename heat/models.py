@@ -13,6 +13,9 @@ class Material(models.Model):
     type_layer = models.ForeignKey(TypeLayer, on_delete=models.CASCADE)
     name_layer = models.CharField(max_length=100, unique=True)
 
+    def __str__(self):
+        return self.name_layer
+
 
 class ThermalIsolation(models.Model):
     name_layer = models.ForeignKey(Material, on_delete=models.CASCADE, null=True, blank=True)
