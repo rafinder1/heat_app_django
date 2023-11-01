@@ -63,13 +63,18 @@ def multi_variant_calculate(data, thermal_isolation_json):
             f'Expected Temperature is not defined. Take the default value equal '
             f'{expected_temperature}°C')
 
-    method = MethodName.finite_element_method
-
     thermal_isolation_data = pd.DataFrame(thermal_isolation_json)
+
+    outside_inside_thermal_data = OutsideInsideThermalData(
+        INSIDE_TEMPERATURE=heat_information['inside_temperature'],
+        OUTSIDE_TEMPERATURE=heat_information['outside_temperature'],
+        INSIDE_HEATER_POWER=heat_information['inside_heater_power'],
+        OUTSIDE_HEATER_POWER=heat_information['outside_heater_power']
+    )
     all_thermal_isolation_with_temp = MultiVariantsCalculator.change_polystyrene(
         data_building_partition=data_building_partition_df,
-        outside_inside_thermal_data=heat_information,
-        polystyrene_data=thermal_isolation_data, method=method)
+        outside_inside_thermal_data=outside_inside_thermal_data,
+        polystyrene_data=thermal_isolation_data, method="finite_element_method")
     all_thermal_isolation_with_temp['temp_diff'] = all_thermal_isolation_with_temp[
                                                        'temperatures'] - expected_temperature
     positive_diff = all_thermal_isolation_with_temp[
@@ -81,12 +86,10 @@ def multi_variant_calculate(data, thermal_isolation_json):
     result = sorted_data_by_name_layer_temp_diff.groupby('name_layer').first().reset_index()
 
     result.sort_values(by=['cost'], inplace=True)
-    print(result)
     return {"name_layer": result.name_layer.to_list(),
             "thickness": result.thickness.to_list(),
             "thermal_conductivity": result.thermal_conductivity.to_list(),
             "cost": result.cost.to_list(),
             "package_square_meters": result.package_square_meters.to_list(),
             "temperatures": result.temperatures.to_list(),
-            # "comments": result.comments.to_list()
             }
