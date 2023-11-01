@@ -77,6 +77,8 @@ def filter_thickness_by_material(request):
         many_materials = filtered_materials.thermalisolation_set.all()
     elif str(type_layer) == 'izolacja':
         many_materials = filtered_materials.isolation_set.all()
+    elif str(type_layer) == 'powietrze':
+        many_materials = filtered_materials.wall_set.all()
 
     materials_data = []
     for material in many_materials:
